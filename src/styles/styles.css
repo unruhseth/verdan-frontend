@@ -1,0 +1,1493 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  .admin-container {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .sidebar {
+    width: 250px;
+    background: #333;
+    color: white;
+    padding: 20px;
+  }
+  
+  .sidebar h2 {
+    margin-top: 0;
+  }
+  
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .sidebar li {
+    margin: 10px 0;
+  }
+  
+  .sidebar li a {
+    display: block;
+    padding: 10px;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .sidebar li a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .sidebar li a.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    font-weight: bold;
+  }
+  
+  .logout-btn {
+    margin-top: 20px;
+    width: 100%;
+    padding: 10px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .logout-btn:hover {
+    background: #c82333;
+  }
+  
+  .content {
+    flex: 1;
+    padding: 20px;
+  }
+
+  /* Login Page Styling */
+  .login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+  }
+
+  .login-container {
+    width: 100%;
+    max-width: 400px;
+    margin: 20px;
+    background: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .login-form h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-group label {
+    color: #555;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .form-group input {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+  }
+
+  .form-group input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+  }
+
+  .login-button {
+    background-color: #007bff;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .login-button:hover {
+    background-color: #0056b3;
+  }
+
+  .error-message {
+    color: #dc3545;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    text-align: center;
+  }
+
+  /*-----account page-----*/
+
+  .account-buttons {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+
+  .add-account-btn, .edit-account-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+  }
+
+  .add-account-btn:hover, .edit-account-btn:hover {
+    background-color: #0056b3;
+    text-decoration: none;
+  }
+
+  .edit-account-btn.active {
+    background-color: #0056b3;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
+  }
+
+  .submenu {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px;
+    background-color: #f4f4f4;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .accounts-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+
+  .accounts-table th, .accounts-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+  }
+
+  .accounts-table th {
+    background-color: #f4f4f4;
+  }
+
+  .account-name-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+
+  .account-name-link:hover {
+    color: #0056b3;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  
+  
+  /*-----create account page-----*/
+
+  .create-account-container {
+    display: flex;
+    justify-content: center; /* Centers horizontally */
+    align-items: center; /* Centers vertically */
+    height: 100vh; /* Full height */
+    width: 100%; /* Ensure it takes the full available space */
+  }
+
+  .create-account-form {
+    width: 350px;
+    text-align: center;
+  }
+
+
+  .create-account-form h2 {
+    margin-bottom: 15px;
+    color: #333;
+    text-align: left;
+  }
+
+  .create-account-form label {
+    display: block;
+    font-weight: bold;
+    margin-top: 10px;
+    text-align: left;
+    font-size: 14px;
+  }
+
+  .create-account-form input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  .create-account-form button {
+    width: 100%;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+
+  .create-account-form button:hover {
+    background: #0056b3;
+  }
+
+
+  .success-message {
+    color: green;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+
+  .error-message {
+    color: red;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+
+
+  /*-----client account page-----*/
+
+
+  .account-title {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+  }
+
+  .account-title:hover {
+    text-decoration: underline;
+  }
+
+  .account-submenu {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+
+  .account-submenu a {
+    text-decoration: none;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: #333;
+    font-weight: bold;
+  }
+
+  .account-submenu a:hover {
+    background: #007bff;
+    color: white;
+  }
+
+  .account-submenu .active {
+    background: #007bff;
+    color: white;
+    border: none;
+  }
+
+
+ /*-----Account Users ----*/
+
+ .account-submenu {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.account-submenu a {
+  text-decoration: none;
+  padding: 8px 16px;
+  border: 1px solid #bbb;
+  border-radius: 5px;
+  background-color: white;
+  font-size: 14px;
+  color: black;
+  transition: 0.2s;
+}
+
+.account-submenu a.active {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+}
+
+.account-submenu a:hover {
+  background-color: #ddd;
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.users-table th, .users-table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+
+.users-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.users-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.users-table tr:hover {
+  background-color: #e3e3e3;
+}
+
+.users-table td {
+  font-size: 14px;
+}
+
+.create-user-form {
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 400px;
+}
+
+.create-user-form h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.create-user-form input, .create-user-form select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.create-user-form button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 4px;
+  transition: 0.3s;
+}
+
+.create-user-form button:hover {
+  background-color: #0056b3;
+}
+
+
+
+.add-user-btn:hover {
+  background-color: #0056b3;
+}
+
+.create-user-form {
+  margin-top: 10px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 400px;
+  transition: all 0.3s ease-in-out;
+}
+
+.user-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.action-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.3s ease;
+    min-width: 100px;
+    text-align: center;
+}
+
+.action-btn:hover {
+    background-color: #0056b3;
+}
+
+.action-btn.active {
+    background-color: #6c757d;
+}
+
+.action-btn.delete-btn {
+    background-color: #dc3545;
+    width: auto;
+    margin: 0;
+}
+
+.action-btn.delete-btn:hover {
+    background-color: #c82333;
+}
+
+.action-btn.delete-btn.active {
+    background-color: #bd2130;
+}
+
+.user-form {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 500px;
+    box-sizing: border-box;
+}
+
+.user-form h3 {
+    margin: 0 0 20px 0;
+    color: #333;
+    font-size: 18px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+
+.form-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.form-buttons button {
+    flex: 1;
+    min-width: 120px;
+    white-space: nowrap;
+}
+
+.submit-btn,
+.reset-password-btn,
+.delete-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+    text-align: center;
+}
+
+.submit-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+.submit-btn:hover {
+    background-color: #218838;
+}
+
+.reset-password-btn {
+    background-color: #6c757d;
+    color: white;
+}
+
+.reset-password-btn:hover {
+    background-color: #5a6268;
+}
+
+.delete-btn {
+    background-color: #dc3545;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+}
+
+.delete-btn:disabled {
+    background-color: #e9a2a9;
+    cursor: not-allowed;
+}
+
+.user-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.3s ease;
+    min-width: 100px;
+    text-align: center;
+}
+
+.delete-form {
+    background-color: #fff5f5;
+}
+
+.users-list {
+    margin-top: 20px;
+    width: 100%;
+    overflow-x: auto;
+}
+
+.users-table {
+    min-width: 600px;
+    width: 100%;
+}
+
+/*----- Apps Page -----*/
+.apps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.app-card {
+    position: relative;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+.app-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.app-icon {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 15px;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.app-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.app-info {
+    flex-grow: 1;
+}
+
+.app-info h3 {
+    margin: 0 0 10px 0;
+    font-size: 18px;
+    color: #333;
+}
+
+.app-info p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.app-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.install-app-btn,
+.manage-app-btn {
+    padding: 8px 16px;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 14px;
+    width: 100%;
+    text-align: center;
+    text-decoration: none;
+}
+
+.install-app-btn {
+    background-color: #28a745;
+}
+
+.install-app-btn:hover {
+    background-color: #218838;
+}
+
+.manage-app-btn {
+    background-color: #007bff;
+}
+
+.manage-app-btn:hover {
+    background-color: #0056b3;
+}
+
+.uninstall-app-btn {
+    background-color: #dc3545;
+}
+
+.uninstall-app-btn:hover {
+    background-color: #c82333;
+}
+
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+}
+
+.loading-spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #007bff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.no-apps-message {
+    text-align: center;
+    color: #666;
+    font-size: 16px;
+    margin-top: 40px;
+}
+
+.apps-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.no-apps-container {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.no-apps-message {
+    font-size: 20px;
+    color: #343a40;
+    margin-bottom: 10px;
+}
+
+.no-apps-subtext {
+    color: #6c757d;
+    font-size: 16px;
+}
+
+/*----- Dynamic App Loader -----*/
+.app-container {
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.app-meta {
+    color: #666;
+    font-size: 14px;
+}
+
+.app-dashboard {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.app-settings {
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.app-settings h3 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.price-settings {
+    max-width: 500px;
+}
+
+.price-info {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: white;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.price-info p {
+    margin: 8px 0;
+    font-size: 15px;
+}
+
+.price-update-form {
+    padding: 20px;
+    background: white;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.price-update-form h4 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.price-input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.update-price-btn {
+    padding: 8px 16px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.update-price-btn:hover {
+    background-color: #218838;
+}
+
+.update-price-btn:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+.update-status {
+    margin-top: 10px;
+    padding: 8px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.update-status.success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.update-status.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.app-loader-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+}
+
+.app-error-container {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.back-button {
+    margin-top: 20px;
+    padding: 8px 16px;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: #5a6268;
+}
+
+/*----- Apps Section -----*/
+.apps-section {
+    margin-bottom: 40px;
+}
+
+.apps-section h2 {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.app-card.installed {
+    border-left: 4px solid #28a745;
+}
+
+.app-card.available {
+    border-left: 4px solid #007bff;
+}
+
+.app-pricing {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+    font-size: 14px;
+    color: #666;
+}
+
+.app-pricing p {
+    margin: 5px 0;
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.modal-content h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+}
+
+.account-select {
+    width: 100%;
+    padding: 10px;
+    margin: 15px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.install-confirm-btn {
+    padding: 8px 16px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.install-confirm-btn:hover {
+    background-color: #218838;
+}
+
+.install-confirm-btn:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+.cancel-btn {
+    padding: 8px 16px;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.cancel-btn:hover {
+    background-color: #5a6268;
+}
+
+.install-status {
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.install-status.success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.install-status.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Account Details Page */
+.account-details {
+    padding: 20px;
+}
+
+.account-info {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.info-section {
+    margin-bottom: 20px;
+}
+
+.info-section h3 {
+    color: #333;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.info-section p {
+    margin: 10px 0;
+    color: #666;
+}
+
+.info-section strong {
+    color: #333;
+    margin-right: 10px;
+}
+
+/* Password Reset Modal */
+.password-reset-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.password-reset-content {
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    margin: 0 auto;
+}
+
+.password-reset-header {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+}
+
+.password-reset-header h3 {
+    margin: 0;
+    color: #333;
+    font-size: 18px;
+}
+
+.password-reset-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.password-input-group {
+    position: relative;
+    width: 100%;
+}
+
+.password-input-group input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+.password-input-group input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+}
+
+.password-reset-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.password-reset-actions button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    min-width: 100px;
+}
+
+.password-reset-confirm {
+    background-color: #007bff;
+    color: white;
+}
+
+.password-reset-confirm:hover {
+    background-color: #0056b3;
+}
+
+.password-reset-cancel {
+    background-color: #6c757d;
+    color: white;
+}
+
+.password-reset-cancel:hover {
+    background-color: #5a6268;
+}
+
+.password-reset-confirm:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Admin Action Buttons */
+.admin-buttons, .account-buttons, .user-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.admin-btn, .account-btn, .action-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.3s ease;
+    min-width: 100px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.admin-btn:hover, .account-btn:hover, .action-btn:hover {
+    background-color: #0056b3;
+    text-decoration: none;
+}
+
+.admin-btn.active, .account-btn.active, .action-btn.active {
+    background-color: #6c757d;
+}
+
+.admin-btn.delete-btn, .account-btn.delete-btn, .action-btn.delete-btn {
+    background-color: #dc3545;
+}
+
+.admin-btn.delete-btn:hover, .account-btn.delete-btn:hover, .action-btn.delete-btn:hover {
+    background-color: #c82333;
+}
+
+.admin-btn.delete-btn.active, .account-btn.delete-btn.active, .action-btn.delete-btn.active {
+    background-color: #bd2130;
+}
+
+/* Delete Container */
+.delete-container {
+    display: inline-block;
+}
+
+.delete-form {
+    margin-top: 10px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff5f5;
+}
+
+.delete-form select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.confirm-delete-btn {
+    background-color: #dc3545;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+.confirm-delete-btn:hover {
+    background-color: #c82333;
+}
+
+.confirm-delete-btn:disabled {
+    background-color: #e9a2a9;
+    cursor: not-allowed;
+}
+
+/* User Form Styles */
+.user-form {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 500px;
+}
+
+.user-form h3 {
+    margin: 0 0 20px 0;
+    color: #333;
+}
+
+.user-form .form-group {
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.user-form input,
+.user-form select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.user-form input:focus,
+.user-form select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+
+.user-form .form-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.user-form .submit-btn,
+.user-form .reset-password-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+    min-width: 100px;
+    text-align: center;
+}
+
+.user-form .submit-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+.user-form .submit-btn:hover {
+    background-color: #218838;
+}
+
+.user-form .reset-password-btn {
+    background-color: #6c757d;
+    color: white;
+}
+
+.user-form .reset-password-btn:hover {
+    background-color: #5a6268;
+}
+
+.user-form.delete-form {
+    background-color: #fff5f5;
+}
+
+/* Common Button Styles */
+.btn-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    align-items: flex-start;  /* Align buttons at the top */
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.3s ease;
+    min-width: 100px;
+    max-width: 150px;  /* Add max-width to prevent too wide buttons */
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    height: 35px;  /* Fixed height for consistency */
+    line-height: normal;  /* Reset line height */
+}
+
+.btn:hover {
+    background-color: #0056b3;
+    text-decoration: none;
+}
+
+.btn.active {
+    background-color: #6c757d;
+}
+
+.btn.delete {
+    background-color: #dc3545;
+}
+
+.btn.delete:hover {
+    background-color: #c82333;
+}
+
+.btn.delete.active {
+    background-color: #bd2130;
+}
+
+.btn:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+.btn.success {
+    background-color: #28a745;
+}
+
+.btn.success:hover {
+    background-color: #218838;
+}
+
+.btn.secondary {
+    background-color: #6c757d;
+}
+
+.btn.secondary:hover {
+    background-color: #5a6268;
+}
+
+/* Delete Form Styles */
+.delete-container {
+    display: inline-block;
+}
+
+.delete-form {
+    margin-top: 10px;
+    padding: 15px;
+    border: 1px solid #dc3545;
+    border-radius: 4px;
+    background-color: #fff8f8;  /* Lighter red background */
+    width: 300px;  /* Fixed width for the delete form */
+}
+
+.delete-form select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: white;
+}
+
+.delete-form .btn {
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* Form Styles */
+.form {
+    background: white;
+    padding: 20px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 500px;
+}
+
+.form h3 {
+    margin: 0 0 20px 0;
+    color: #333;
+    font-size: 18px;
+}
+
+.form input,
+.form select {
+    width: 100%;
+    padding: 8px 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.form input:focus,
+.form select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+
+.form .btn {
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
