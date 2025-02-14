@@ -1,3 +1,3 @@
-const API_BASE_URL = "http://localhost:5000"; // Update if needed when deploying
+const API_BASE_URL = "https://verdan-api.onrender.com"; // Update if needed when deploying
 
 export default API_BASE_URL;
