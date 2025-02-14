@@ -141,7 +141,7 @@ export const AuthProvider = ({ children }) => {
 
             console.log('Login response status:', response.status);
             
-            const data = await response.json();
+            const data = response.data;
             console.log('Login response data:', {
                 status: response.status,
                 message: data.message,
@@ -150,7 +150,7 @@ export const AuthProvider = ({ children }) => {
                 accountId: data.account_id
             });
 
-            if (!response.ok) {
+            if (response.status !== 200) {
                 const error = new Error(data.message || 'Login failed');
                 error.status = response.status;
                 throw error;
