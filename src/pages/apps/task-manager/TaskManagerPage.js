@@ -63,7 +63,7 @@ const TaskManagerPage = () => {
             const token = localStorage.getItem('token');
             if (!token) throw new Error('No authentication token found');
 
-            const response = await fetch(`http://localhost:5000/tasks/list?account_id=${accountId}`, {
+            const response = await fetch(`https://verdan-api.onrender.com/tasks/list?account_id=${accountId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -86,7 +86,7 @@ const TaskManagerPage = () => {
     const addTaskMutation = useMutation({
         mutationFn: async (newTask) => {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:5000/tasks/add', {
+            const response = await fetch('https://verdan-api.onrender.com/tasks/add', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -119,7 +119,7 @@ const TaskManagerPage = () => {
     const updateTaskMutation = useMutation({
         mutationFn: async ({ taskId, status }) => {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:5000/tasks/update', {
+            const response = await fetch('https://verdan-api.onrender.com/tasks/update', {
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -156,7 +156,7 @@ const TaskManagerPage = () => {
     const deleteTaskMutation = useMutation({
         mutationFn: async (taskId) => {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:5000/tasks/delete', {
+            const response = await fetch('https://verdan-api.onrender.com/tasks/delete', {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`,

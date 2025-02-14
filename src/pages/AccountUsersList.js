@@ -33,7 +33,7 @@ const AccountUsersList = () => {
             const token = localStorage.getItem("token");
             if (!token) throw new Error("No authentication token found.");
 
-            const response = await fetch(`http://localhost:5000/accounts/${accountId}/users`, {
+            const response = await fetch(`https://verdan-api.onrender.com/accounts/${accountId}/users`, {
                 method: "GET",
                 headers: { 
                     "Authorization": `Bearer ${token}`, 
@@ -64,7 +64,7 @@ const AccountUsersList = () => {
             const token = localStorage.getItem("token");
             if (!token) throw new Error("No authentication token found.");
 
-            const response = await fetch(`http://localhost:5000/accounts/${accountId}/users`, {
+            const response = await fetch(`https://verdan-api.onrender.com/accounts/${accountId}/users`, {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -92,7 +92,7 @@ const AccountUsersList = () => {
             const token = localStorage.getItem("token");
             if (!token) throw new Error("No authentication token found.");
 
-            const response = await fetch(`http://localhost:5000/accounts/${accountId}/users/${selectedUser.id}`, {
+            const response = await fetch(`https://verdan-api.onrender.com/accounts/${accountId}/users/${selectedUser.id}`, {
                 method: "PUT",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -119,7 +119,7 @@ const AccountUsersList = () => {
             const token = localStorage.getItem("token");
             if (!token) throw new Error("No authentication token found.");
 
-            const response = await fetch(`http://localhost:5000/accounts/${accountId}/users/${userId}`, {
+            const response = await fetch(`https://verdan-api.onrender.com/accounts/${accountId}/users/${userId}`, {
                 method: "DELETE",
                 headers: {
                     "Authorization": `Bearer ${token}`
@@ -142,7 +142,7 @@ const AccountUsersList = () => {
             const token = localStorage.getItem("token");
             if (!token) throw new Error("No authentication token found.");
 
-            const response = await fetch(`http://localhost:5000/accounts/${accountId}/users/${userId}/reset-password`, {
+            const response = await fetch(`https://verdan-api.onrender.com/accounts/${accountId}/users/${userId}/reset-password`, {
                 method: "PUT",
                 headers: {
                     "Authorization": `Bearer ${token}`,

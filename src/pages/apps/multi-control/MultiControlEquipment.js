@@ -37,7 +37,7 @@ const MultiControlEquipment = () => {
                 return;
             }
 
-            const response = await axios.get(`http://localhost:5000/multi_controls/equipment/?account_id=${accountId}`, {
+            const response = await axios.get(`https://verdan-api.onrender.com/multi_controls/equipment/?account_id=${accountId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -65,7 +65,7 @@ const MultiControlEquipment = () => {
                 return;
             }
 
-            const response = await axios.get(`http://localhost:5000/multi_controls/fields/?account_id=${accountId}`, {
+            const response = await axios.get(`https://verdan-api.onrender.com/multi_controls/fields/?account_id=${accountId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -92,7 +92,7 @@ const MultiControlEquipment = () => {
             }
 
             const response = await axios.post(
-                'http://localhost:5000/multi_controls/equipment/create',
+                            'https://verdan-api.onrender.com/multi_controls/equipment/create',
                 { ...newEquipment, account_id: accountId },
                 {
                     headers: {
@@ -129,7 +129,7 @@ const MultiControlEquipment = () => {
             if (!token) throw new Error('No authentication token found.');
 
             const response = await axios.put(
-                `http://localhost:5000/multi_controls/equipment/${equipmentData.id}`,
+                            `https://verdan-api.onrender.com/multi_controls/equipment/${equipmentData.id}`,
                 {
                     account_id: parseInt(accountId),
                     ...equipmentData
@@ -163,7 +163,7 @@ const MultiControlEquipment = () => {
             const token = localStorage.getItem('token');
             if (!token) throw new Error('No authentication token found.');
 
-            await axios.delete(`http://localhost:5000/multi_controls/equipment/${equipmentId}`, {
+            await axios.delete(`https://verdan-api.onrender.com/multi_controls/equipment/${equipmentId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'

@@ -58,7 +58,7 @@ const TaskManagerApp = () => {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('No authentication token found.');
 
-      const response = await fetch(`http://localhost:5000/tasks/list?account_id=${accountId}`, {
+      const response = await fetch(`https://verdan-api.onrender.com/tasks/list?account_id=${accountId}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -85,7 +85,7 @@ const TaskManagerApp = () => {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('No authentication token found.');
 
-      const response = await fetch('http://localhost:5000/tasks/add', {
+      const response = await fetch('https://verdan-api.onrender.com/tasks/add', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -118,7 +118,7 @@ const TaskManagerApp = () => {
 
       console.log('Updating task:', { taskId, newStatus, accountId });
 
-      const response = await fetch(`http://localhost:5000/tasks/update`, {
+      const response = await fetch(`https://verdan-api.onrender.com/tasks/update`, {
         method: 'POST',  // Changed from PATCH to POST since backend might not support PATCH
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -158,7 +158,7 @@ const TaskManagerApp = () => {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('No authentication token found.');
 
-      const response = await fetch('http://localhost:5000/tasks/delete', {
+      const response = await fetch('https://verdan-api.onrender.com/tasks/delete', {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,

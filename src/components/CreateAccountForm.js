@@ -20,7 +20,7 @@ const CreateAccountForm = ({ onCancel }) => {
             const token = localStorage.getItem('token');
             if (!token) throw new Error('No authentication token found');
 
-            const response = await fetch('http://localhost:5000/accounts/', {
+            const response = await fetch('https://verdan-api.onrender.com/accounts/', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,

@@ -91,7 +91,7 @@ const AppsPage = () => {
                 return;
             }
 
-            const response = await fetch("http://localhost:5000/admin/accounts", {
+            const response = await fetch("https://verdan-api.onrender.com/admin/accounts", {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -141,7 +141,7 @@ const AppsPage = () => {
                 body = { app_id: selectedApp.id };
             }
 
-            const response = await fetch(`http://localhost:5000${endpoint}`, {
+            const response = await fetch(`https://verdan-api.onrender.com${endpoint}`, {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${token}`,

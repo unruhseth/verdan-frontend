@@ -19,7 +19,7 @@ const MultiControlDashboard = () => {
             const token = localStorage.getItem('token');
             if (!token) throw new Error('No authentication token found.');
 
-            const response = await axios.get(`http://localhost:5000/multi_controls/fields/${fieldId}`, {
+            const response = await axios.get(`https://verdan-api.onrender.com/multi_controls/fields/${fieldId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -46,7 +46,7 @@ const MultiControlDashboard = () => {
             formData.append('field_id', fieldId);
 
             const response = await axios.post(
-                `http://localhost:5000/multi_controls/fields/upload_${type.toLowerCase()}`,
+                            `https://verdan-api.onrender.com/multi_controls/fields/upload_${type.toLowerCase()}`,
                 formData,
                 {
                     headers: {

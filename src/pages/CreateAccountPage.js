@@ -22,7 +22,7 @@ const CreateAccountPage = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/accounts/", {
+      const response = await fetch("https://verdan-api.onrender.com/accounts/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -22,7 +22,7 @@ const AccountsPage = () => {
             const token = localStorage.getItem("token");
             if (!token) throw new Error("No authentication token found.");
 
-            const response = await fetch("http://localhost:5000/admin/accounts", {
+            const response = await fetch("https://verdan-api.onrender.com/admin/accounts", {
                 headers: {
                     "Authorization": `Bearer ${token}`,
                     "Content-Type": "application/json"
@@ -48,7 +48,7 @@ const AccountsPage = () => {
             const token = localStorage.getItem("token");
             if (!token) throw new Error("No authentication token found.");
 
-            const response = await fetch(`http://localhost:5000/accounts/${selectedAccount}`, {
+            const response = await fetch(`https://verdan-api.onrender.com/accounts/${selectedAccount}`, {
                 method: "DELETE",
                 headers: {
                     "Authorization": `Bearer ${token}`,

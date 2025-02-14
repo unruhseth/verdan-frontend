@@ -33,7 +33,7 @@ const MultiControlPage = () => {
                 return;
             }
 
-            const response = await axios.get(`http://localhost:5000/multi_controls/fields/?account_id=${accountId}`, {
+            const response = await axios.get(`https://verdan-api.onrender.com/multi_controls/fields/?account_id=${accountId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -63,7 +63,7 @@ const MultiControlPage = () => {
             }
 
             const response = await axios.post(
-                'http://localhost:5000/multi_controls/fields/create',
+                            'https://verdan-api.onrender.com/multi_controls/fields/create',
                 { ...newField, account_id: accountId },
                 {
                     headers: {

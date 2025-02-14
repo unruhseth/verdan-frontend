@@ -21,7 +21,7 @@ const AccountUsersPage = () => {
             const token = localStorage.getItem("token");
             if (!token) throw new Error("No authentication token found.");
 
-            const response = await fetch(`http://localhost:5000/admin/accounts/${accountId}/users`, {
+            const response = await fetch(`https://verdan-api.onrender.com/admin/accounts/${accountId}/users`, {
                 method: "GET",
                 headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
             });
@@ -52,7 +52,7 @@ const AccountUsersPage = () => {
             const token = localStorage.getItem("token");
             if (!token) throw new Error("No authentication token found.");
 
-            const response = await fetch(`http://localhost:5000/admin/accounts/${accountId}/users`, {
+            const response = await fetch(`https://verdan-api.onrender.com/admin/accounts/${accountId}/users`, {
                 method: "POST",
                 headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
                 body: JSON.stringify(newUser),
@@ -76,7 +76,7 @@ const AccountUsersPage = () => {
             const token = localStorage.getItem("token");
             if (!token) throw new Error("No authentication token found.");
 
-            const response = await fetch(`http://localhost:5000/accounts/${accountId}/users/${editUser.id}`, {
+            const response = await fetch(`https://verdan-api.onrender.com/accounts/${accountId}/users/${editUser.id}`, {
                 method: "PUT",
                 headers: { 
                     "Authorization": `Bearer ${token}`, 
@@ -111,7 +111,7 @@ const AccountUsersPage = () => {
           const token = localStorage.getItem("token");
           if (!token) throw new Error("No authentication token found.");
   
-          const response = await fetch(`http://localhost:5000/admin/users/${editUser.id}/reset_password`, {
+          const response = await fetch(`https://verdan-api.onrender.com/admin/users/${editUser.id}/reset_password`, {
               method: "PUT",
               headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
               body: JSON.stringify({ new_password: editUser.new_password }),
@@ -134,7 +134,7 @@ const AccountUsersPage = () => {
             const token = localStorage.getItem("token");
             if (!token) throw new Error("No authentication token found.");
     
-            const response = await fetch(`http://localhost:5000/admin/users/${userId}`, {
+            const response = await fetch(`https://verdan-api.onrender.com/admin/users/${userId}`, {
                 method: "DELETE",
                 headers: { "Authorization": `Bearer ${token}` },
             });

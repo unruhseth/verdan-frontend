@@ -39,7 +39,7 @@ const MultiControlAlerts = () => {
                 return;
             }
 
-            const response = await axios.get(`http://localhost:5000/multi_controls/alerts/?account_id=${accountId}`, {
+            const response = await axios.get(`https://verdan-api.onrender.com/multi_controls/alerts/?account_id=${accountId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -67,7 +67,7 @@ const MultiControlAlerts = () => {
                 return;
             }
 
-            const response = await axios.get(`http://localhost:5000/multi_controls/fields/?account_id=${accountId}`, {
+            const response = await axios.get(`https://verdan-api.onrender.com/multi_controls/fields/?account_id=${accountId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -92,7 +92,7 @@ const MultiControlAlerts = () => {
                 return;
             }
 
-            const response = await axios.get(`http://localhost:5000/multi_controls/equipment/?account_id=${accountId}`, {
+            const response = await axios.get(`https://verdan-api.onrender.com/multi_controls/equipment/?account_id=${accountId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -119,7 +119,7 @@ const MultiControlAlerts = () => {
             }
 
             const response = await axios.post(
-                'http://localhost:5000/multi_controls/alerts/create',
+                            'https://verdan-api.onrender.com/multi_controls/alerts/create',
                 { ...newAlert, account_id: accountId },
                 {
                     headers: {

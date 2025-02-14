@@ -54,7 +54,7 @@ const AccountAppsPage = () => {
             const endpoint = `/apps/installed?account_id=${accountId}`;
             console.log('Fetching apps from endpoint:', endpoint);
 
-            const response = await fetch(`http://localhost:5000${endpoint}`, {
+            const response = await fetch(`https://verdan-api.onrender.com${endpoint}`, {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -100,7 +100,7 @@ const AccountAppsPage = () => {
 
             console.log('Installing app:', { appId, accountId });
 
-            const response = await fetch(`http://localhost:5000/admin/accounts/${accountId}/apps/install`, {
+            const response = await fetch(`https://verdan-api.onrender.com/admin/accounts/${accountId}/apps/install`, {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -136,7 +136,7 @@ const AccountAppsPage = () => {
 
             console.log('Uninstalling app:', { appId, accountId });
 
-            const response = await fetch(`http://localhost:5000/admin/accounts/${accountId}/apps/uninstall`, {
+            const response = await fetch(`https://verdan-api.onrender.com/admin/accounts/${accountId}/apps/uninstall`, {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${token}`,

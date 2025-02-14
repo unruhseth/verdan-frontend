@@ -19,7 +19,7 @@ const DeleteAppButton = ({ apps, onSuccess }) => {
             const token = localStorage.getItem("token");
             if (!token) throw new Error("No authentication token found.");
 
-            const response = await fetch(`http://localhost:5000/admin/apps/${selectedApp.id}`, {
+            const response = await fetch(`https://verdan-api.onrender.com/admin/apps/${selectedApp.id}`, {
                 method: "DELETE",
                 headers: {
                     "Authorization": `Bearer ${token}`

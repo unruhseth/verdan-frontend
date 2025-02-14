@@ -28,7 +28,7 @@ const AppTemplate = () => {
                 return;
             }
 
-            const response = await fetch(`http://localhost:5000/your_app/data?account_id=${accountId}`, {
+            const response = await fetch(`https://verdan-api.onrender.com/your_app/data?account_id=${accountId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
