@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import secureStorage from '../services/secureStorage';
 
-const API_URL = 'https://verdan-api.onrender.com';
+import API_BASE_URL from '../config';
+
+const API_URL = API_BASE_URL;
 
 const AuthContext = createContext(null);
 
