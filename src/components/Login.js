@@ -1,53 +1,20 @@
 import React from 'react';
-import { Form, Input, Button, Alert, Card } from 'antd';
+import { Form, Input, Button, Alert, Card, Checkbox } from 'antd';
 import { useAuth } from '../hooks/useAuth';
 
 const Login = () => {
     const { handleLogin, error, isLoading } = useAuth();
     const [form] = Form.useForm();
 
-    const onFinish = async (values) => {
-        try {
-            await handleLogin(values);
-        } catch (err) {
-            console.log('Login form submission error:', err.message);
-            
-            // Handle specific error cases
-            if (err.status === 401) {
-                form.setFields([
-                    {
-                        name: 'email',
-                        errors: ['User not found. Please check your email address.']
-                    },
-                    {
-                        name: 'password',
-                        errors: []
-                    }
-                ]);
-            } else if (err.message.includes('password')) {
-                form.setFields([
-                    {
-                        name: 'email',
-                        errors: []
-                    },
-                    {
-                        name: 'password',
-                        errors: ['Incorrect password']
-                    }
-                ]);
-            } else {
-                form.setFields([
-                    {
-                        name: 'email',
-                        errors: []
-                    },
-                    {
-                        name: 'password',
-                        errors: [err.message || 'Login failed']
-                    }
-                ]);
-            }
-        }
+    const onFinish = (values) => {
+        // Clear any previous field errors
+        form.setFields([
+            { name: 'email', errors: [] },
+            { name: 'password', errors: [] }
+        ]);
+        
+        // Let handleLogin handle the error display
+        handleLogin(values.email, values.password, values.remember_me);
     };
 
     return (
@@ -68,12 +35,15 @@ const Login = () => {
                 
                 {error && (
                     <Alert
-                        message="Login Failed"
-                        description={error}
+                        message={error}
                         type="error"
                         showIcon
-                        closable
-                        style={{ marginBottom: '1rem' }}
+                        style={{
+                            marginBottom: '1.5rem',
+                            backgroundColor: '#fff2f0',
+                            border: '1px solid #ffccc7',
+                            borderRadius: '4px'
+                        }}
                     />
                 )}
 
@@ -116,6 +86,17 @@ const Login = () => {
                             placeholder="Enter your password"
                             disabled={isLoading}
                         />
+                    </Form.Item>
+
+                    <Form.Item
+                        name="remember_me"
+                        valuePropName="checked"
+                        style={{ marginBottom: '24px' }}
+                    >
+                        <a className="login-form-forgot" href="#">
+                            Forgot password
+                        </a>
+                        <Checkbox>Remember me</Checkbox>
                     </Form.Item>
 
                     <Form.Item>

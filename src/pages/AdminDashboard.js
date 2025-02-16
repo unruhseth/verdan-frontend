@@ -1,22 +1,12 @@
-import React from "react";
-import { Routes, Route } from "react-router-dom";
-import DashboardHome from "./DashboardHome";
-import AdminSidebar from "../components/AdminSidebar";
-import { useAuth } from "../hooks/useAuth";
+import React from 'react';
 
 const AdminDashboard = () => {
-    return (
-      <div className="admin-container">
-        <AdminSidebar />
-        
-        {/* Main Content */}
-        <main className="content">
-          <Routes>
-            <Route index element={<DashboardHome />} />
-          </Routes>
-        </main>
-      </div>
-    );
-  };
-  
-  export default AdminDashboard;
+  return (
+    <div>
+      <h1>Admin Dashboard</h1>
+      {/* Add your dashboard content here */}
+    </div>
+  );
+};
+
+export default AdminDashboard;

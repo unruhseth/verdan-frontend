@@ -1,274 +1,167 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import secureStorage from '../services/secureStorage';
-
-import API_BASE_URL from '../config';
-
-const API_URL = API_BASE_URL;
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import api, { authApi } from '../utils/api';
 
 const AuthContext = createContext(null);
 
+// Helper to get cookies
+const getCookie = (name) => {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return null;
+};
+
+// Initialize state from cookies and session storage
+const initializeAuthState = () => {
+  const userInfoStr = sessionStorage.getItem('userInfo');
+  const accessToken = getCookie('access_token_cookie');
+  const refreshToken = getCookie('refresh_token_cookie');
+  
+  try {
+    const userInfo = userInfoStr ? JSON.parse(userInfoStr) : null;
+    return {
+      isAuthenticated: !!accessToken && !!refreshToken && !!userInfo,
+      userInfo: userInfo
+    };
+  } catch (e) {
+    console.error('Error parsing stored user info:', e);
+    return { isAuthenticated: false, userInfo: null };
+  }
+};
+
 export const AuthProvider = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [auth, setAuth] = useState(null);
-    const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-    // Create axios instance with default config
-    const api = axios.create({
-        baseURL: API_URL,
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        withCredentials: false // Disable credentials for now
+  const checkAuth = useCallback(async () => {
+    if (window.location.pathname === '/login') {
+      return;
+    }
+
+    const userInfoStr = sessionStorage.getItem('userInfo');
+    const accessToken = sessionStorage.getItem('access_token');
+
+    console.log('Checking auth state:', {
+      hasUserInfo: !!userInfoStr,
+      hasAccessToken: !!accessToken
     });
 
-    // Add request interceptor for debugging
-    api.interceptors.request.use(request => {
-        console.log('Starting Request:', {
-            url: request.url,
-            method: request.method,
-            headers: request.headers,
-            data: request.data
-        });
-        return request;
-    });
+    if (!accessToken || !userInfoStr) {
+      setIsAuthenticated(false);
+      setUserInfo(null);
+      return;
+    }
 
-    // Add response interceptor for debugging
-    api.interceptors.response.use(
-        response => {
-            console.log('Response:', {
-                status: response.status,
-                headers: response.headers,
-                data: response.data
-            });
-            return response;
-        },
-        error => {
-            console.error('Response Error:', {
-                message: error.message,
-                response: error.response,
-                request: error.request
-            });
-            throw error;
-        }
-    );
+    try {
+      const userInfo = JSON.parse(userInfoStr);
+      if (!userInfo || !userInfo.role || !userInfo.account_id) {
+        throw new Error('Invalid user info');
+      }
+      setIsAuthenticated(true);
+      setUserInfo(userInfo);
+    } catch (error) {
+      console.error('Auth check failed:', error);
+      setIsAuthenticated(false);
+      setUserInfo(null);
+      sessionStorage.removeItem('userInfo');
+      sessionStorage.removeItem('access_token');
+    }
+  }, []);
 
-    // Check for existing auth on mount
-    useEffect(() => {
-        checkAuth();
-    }, []);
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
 
-    const checkAuth = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const storedRole = localStorage.getItem('role');
-            console.log('Current auth state:', {
-                token: token ? 'exists' : 'missing',
-                role: storedRole,
-                isAuthenticated,
-                isLoading
-            });
+  const login = useCallback(async (email, password) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      console.log('Starting login process...');
+      
+      const response = await authApi.login(email, password);
+      
+      console.log('Login response received:', {
+        hasUser: !!response.user,
+        userRole: response.user?.role
+      });
 
-            if (!token) {
-                console.log('No token found, setting not authenticated');
-                setIsAuthenticated(false);
-                setIsLoading(false);
-                return;
-            }
+      // Store user info
+      const userInfo = {
+        role: response.user.role,
+        account_id: response.user.account_id,
+        id: response.user.id,
+        email: response.user.email,
+        name: response.user.name
+      };
+      
+      sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
+      
+      // Verify user info was stored
+      const storedUserInfo = sessionStorage.getItem('userInfo');
+      
+      if (!storedUserInfo) {
+        throw new Error('Failed to store user info');
+      }
 
-            // Verify token is still valid
-            console.log('Sending verification request...');
-            const response = await axios.get(`${API_URL}/auth/verify`, {
-                headers: { 
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-            
-            console.log('Token verification response:', {
-                status: response.status,
-                data: response.data
-            });
-            
-            if (response.status === 200 && response.data) {
-                const data = response.data;
-                console.log('Verification successful:', {
-                    data,
-                    previousAuth: auth
-                });
+      setIsAuthenticated(true);
+      setUserInfo(userInfo);
+      
+      return response;
+    } catch (error) {
+      console.error('Login error:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
+      
+      setError(error.response?.data?.error || error.message || 'Login failed');
+      setIsAuthenticated(false);
+      setUserInfo(null);
+      sessionStorage.removeItem('userInfo');
+      
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
-                // Set authentication state
-                setAuth(data);
-                setIsAuthenticated(true);
-                
-                // Ensure role and accountId are set in localStorage
-                if (data.role) {
-                    console.log('Setting role:', data.role);
-                    localStorage.setItem('role', data.role);
-                }
-                if (data.account_id) {
-                    console.log('Setting accountId:', data.account_id);
-                    localStorage.setItem('accountId', data.account_id.toString());
-                }
-            } else {
-                console.log('Token verification failed:', response.data);
-                handleLogout();
-            }
-        } catch (error) {
-            console.error('Auth check failed:', error);
-            handleLogout();
-        } finally {
-            console.log('Auth check completed. Final state:', {
-                isAuthenticated,
-                isLoading,
-                auth: auth ? 'exists' : 'null'
-            });
-            setIsLoading(false);
-        }
-    };
+  const logout = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      await authApi.logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      sessionStorage.removeItem('userInfo');
+      setIsAuthenticated(false);
+      setUserInfo(null);
+      setError(null);
+      setIsLoading(false);
+      window.location.href = '/login';
+    }
+  }, []);
 
-    const handleLogin = async (credentials) => {
-        console.log('Login attempt:', { email: credentials.email });
-        setError(null);
-        setIsLoading(true);
+  const value = {
+    isAuthenticated,
+    userInfo,
+    error,
+    isLoading,
+    login,
+    logout,
+    checkAuth,
+    clearError: () => setError(null)
+  };
 
-        try {
-            const response = await api.post('/auth/login', credentials);
-
-            console.log('Login response status:', response.status);
-            
-            const data = response.data;
-            console.log('Login response data:', {
-                status: response.status,
-                message: data.message,
-                hasToken: !!data.token,
-                role: data.role,
-                accountId: data.account_id
-            });
-
-            if (response.status !== 200) {
-                const error = new Error(data.message || 'Login failed');
-                error.status = response.status;
-                throw error;
-            }
-
-            if (!data.token) {
-                throw new Error('No token received from server');
-            }
-
-            if (!data.role) {
-                throw new Error('No role received from server');
-            }
-
-            // Clear any existing auth data
-            localStorage.clear();
-
-            // Store new auth data
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('role', data.role);
-            
-            if (data.account_id !== undefined && data.account_id !== null) {
-                localStorage.setItem('accountId', data.account_id.toString());
-                console.log('Stored accountId:', data.account_id.toString());
-            }
-
-            console.log('Authentication successful:', {
-                role: data.role,
-                accountId: data.account_id,
-                hasToken: !!data.token
-            });
-
-            await handleLoginSuccess(data);
-        } catch (error) {
-            console.error('Login error:', {
-                message: error.message,
-                status: error.status,
-                stack: error.stack
-            });
-
-            // Set specific error messages based on the error
-            if (error.status === 401) {
-                setError('User not found. Please check your email address.');
-            } else if (error.message.includes('password')) {
-                setError('Incorrect password. Please try again.');
-            } else {
-                setError(error.message || 'Failed to login');
-            }
-            
-            throw error;
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const handleLoginSuccess = async (data) => {
-        console.log('Processing successful login:', {
-            role: data.role,
-            accountId: data.account_id
-        });
-
-        try {
-            setIsAuthenticated(true);
-            
-            const role = data.role;
-            const accountId = data.account_id;
-
-            // Determine navigation based on role
-            if (['master_admin', 'admin'].includes(role)) {
-                console.log('Admin login - navigating to /admin');
-                navigate('/admin');
-            } else if (['account_admin', 'user'].includes(role)) {
-                if (!accountId) {
-                    console.error('No account ID for user/account_admin role');
-                    throw new Error('Account ID is required for user access');
-                }
-                console.log(`User login - navigating to /account/${accountId}/dashboard`);
-                navigate(`/account/${accountId}/dashboard`);
-            } else {
-                console.error('Unknown role:', role);
-                throw new Error('Invalid role received');
-            }
-        } catch (error) {
-            console.error('Navigation error:', error);
-            setError(error.message);
-            // Clear auth data on navigation error
-            localStorage.clear();
-            setIsAuthenticated(false);
-            throw error;
-        }
-    };
-
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('role');
-        localStorage.removeItem('accountId');
-        setIsAuthenticated(false);
-        setAuth(null);
-        navigate('/login');
-    };
-
-    return (
-        <AuthContext.Provider value={{
-            isAuthenticated,
-            isLoading,
-            error,
-            login: handleLogin,
-            logout: handleLogout,
-            checkAuth
-        }}>
-            {children}
-        </AuthContext.Provider>
-    );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {
-    const context = useContext(AuthContext);
-    if (!context) {
-        throw new Error('useAuth must be used within an AuthProvider');
-    }
-    return context;
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 };

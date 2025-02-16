@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
+import { useAuth } from './useAuth';
 
 export const ROLES = {
     MASTER_ADMIN: 'master_admin',
@@ -10,134 +11,67 @@ export const ROLES = {
 
 export const usePermissions = () => {
     const { accountId } = useParams();
-    const [userRole, setUserRole] = useState(localStorage.getItem('role'));
-    const [userAccountId, setUserAccountId] = useState(localStorage.getItem('accountId'));
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        const loadPermissions = () => {
-            const role = localStorage.getItem('role');
-            const accId = localStorage.getItem('accountId');
-            
-            console.log('Loading permissions:', { 
-                role, 
-                accId,
-                urlAccountId: accountId,
-                pathname: window.location.pathname
-            });
-            
-            setUserRole(role);
-            setUserAccountId(accId);
-            setIsLoading(false);
-        };
-
-        loadPermissions();
-
-        // Update permissions when localStorage changes
-        const handleStorageChange = (e) => {
-            if (e.key === 'role' || e.key === 'accountId') {
-                console.log('Storage changed:', {
-                    key: e.key,
-                    oldValue: e.oldValue,
-                    newValue: e.newValue
-                });
-                loadPermissions();
-            }
-        };
-
-        window.addEventListener('storage', handleStorageChange);
-        return () => window.removeEventListener('storage', handleStorageChange);
-    }, [accountId]);
+    const { isAuthenticated, isLoading: authLoading, userInfo } = useAuth();
 
     // Check if user is any type of admin
-    const isAdmin = () => {
-        const result = ['master_admin', 'admin'].includes(userRole);
-        console.log('isAdmin check:', { userRole, result });
-        return result;
-    };
+    const isAdmin = useCallback(() => {
+        return userInfo && ['master_admin', 'admin'].includes(userInfo.role);
+    }, [userInfo]);
 
     // Check if user is specifically a master admin
-    const isMasterAdmin = () => {
-        console.log('Checking isMasterAdmin, role:', userRole);
-        return userRole === 'master_admin';
-    };
+    const isMasterAdmin = useCallback(() => {
+        return userInfo && userInfo.role === ROLES.MASTER_ADMIN;
+    }, [userInfo]);
 
     // Check if user is an account admin for the current account
-    const isAccountAdmin = () => {
-        console.log('Checking isAccountAdmin:', { userRole, accountId, userAccountId });
-        if (!accountId) return false;
-        // Convert both to strings for comparison to handle type mismatches
-        return userRole === 'account_admin' && userAccountId?.toString() === accountId?.toString();
-    };
+    const isAccountAdmin = useCallback(() => {
+        if (!accountId || !userInfo) return false;
+        return userInfo.role === ROLES.ACCOUNT_ADMIN && 
+               userInfo.account_id?.toString() === accountId?.toString();
+    }, [userInfo, accountId]);
 
     // Check if user has access to the current account
-    const hasAccountAccess = () => {
-        console.log('Checking account access:', { 
-            userRole,
-            userAccountId,
-            urlAccountId: accountId,
-            pathname: window.location.pathname
-        });
-
-        // No account context, access is allowed
-        if (!accountId) {
-            console.log('No account context, access allowed');
-            return true;
-        }
-
-        // Admins can access all accounts
-        if (isAdmin()) {
-            console.log('Admin access granted');
-            return true;
-        }
-
-        // For user roles, check account ID match
-        const hasAccess = userAccountId?.toString() === accountId?.toString();
-        console.log('User account access check:', { 
-            hasAccess,
-            userAccountId,
-            urlAccountId: accountId
-        });
-        
-        return hasAccess;
-    };
+    const hasAccountAccess = useCallback(() => {
+        if (!isAuthenticated || !userInfo) return false;
+        if (!accountId) return true;
+        if (isAdmin()) return true;
+        return userInfo.account_id?.toString() === accountId?.toString();
+    }, [accountId, userInfo, isAdmin, isAuthenticated]);
 
     // Check if user can manage apps
-    const canManageApps = () => {
-        const result = isAdmin() || userRole === 'account_admin';
-        console.log('canManageApps check:', { userRole, result });
-        return result;
-    };
+    const canManageApps = useCallback(() => {
+        if (!isAuthenticated || !userInfo) return false;
+        return isAdmin() || userInfo.role === ROLES.ACCOUNT_ADMIN;
+    }, [userInfo, isAdmin, isAuthenticated]);
 
     // Check if user can manage users
-    const canManageUsers = () => {
-        const result = isAdmin() || userRole === 'account_admin';
-        console.log('canManageUsers check:', { userRole, result });
-        return result;
-    };
+    const canManageUsers = useCallback(() => {
+        if (!isAuthenticated || !userInfo) return false;
+        return isAdmin() || userInfo.role === ROLES.ACCOUNT_ADMIN;
+    }, [userInfo, isAdmin, isAuthenticated]);
 
     // Check if user can manage account settings
-    const canManageAccountSettings = () => {
-        console.log('Checking canManageAccountSettings:', { userRole });
+    const canManageAccountSettings = useCallback(() => {
+        if (!isAuthenticated || !userInfo) return false;
         return isAdmin() || isAccountAdmin();
-    };
+    }, [isAdmin, isAccountAdmin, isAuthenticated]);
 
     // Check if user can view sensitive information
-    const canViewSensitiveInfo = () => {
-        console.log('Checking canViewSensitiveInfo:', { userRole });
+    const canViewSensitiveInfo = useCallback(() => {
+        console.log('Checking canViewSensitiveInfo:', { userInfo });
         return isAdmin() || isAccountAdmin();
-    };
+    }, [isAdmin, isAccountAdmin]);
 
     // Check if user can delete things (might want to restrict this to higher levels)
-    const canDelete = () => {
-        console.log('Checking canDelete:', { userRole });
+    const canDelete = useCallback(() => {
+        console.log('Checking canDelete:', { userInfo });
         return isAdmin();
-    };
+    }, [isAdmin]);
 
     return {
-        userRole,
-        userAccountId,
-        isLoading,
+        userRole: userInfo?.role,
+        userAccountId: userInfo?.account_id,
+        isLoading: authLoading,
         isAdmin,
         isMasterAdmin,
         isAccountAdmin,

@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Table, Button, Modal, message, Popconfirm, Space, Card } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import ItemForm from '../../../components/apps/inventory/ItemForm';
-import { inventoryApi } from '../../../utils/api';
+import api, { inventoryApi } from '../../../utils/api';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient({
@@ -165,4 +165,4 @@ const InventoryPage = () => {
   );
 };
 
-export default InventoryPageWrapper; 
+export default InventoryPageWrapper;

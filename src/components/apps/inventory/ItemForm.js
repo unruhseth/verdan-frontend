@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form, Input, InputNumber, Button, message } from 'antd';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { inventoryApi } from '../../../utils/api';
+import api, { inventoryApi } from '../../../utils/api';
 
 const ItemForm = ({ initialValues, onSuccess, mode }) => {
   const [form] = Form.useForm();
@@ -133,7 +133,7 @@ const ItemForm = ({ initialValues, onSuccess, mode }) => {
         <InputNumber
           min={0}
           step={0.01}
-          formatter={value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+          formatter={value => `$ {value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
           parser={value => value.replace(/\$\s?|(,*)/g, '')}
           style={{ width: '100%' }}
         />
@@ -148,7 +148,7 @@ const ItemForm = ({ initialValues, onSuccess, mode }) => {
         <InputNumber
           min={0}
           step={0.01}
-          formatter={value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+          formatter={value => `$ {value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
           parser={value => value.replace(/\$\s?|(,*)/g, '')}
           style={{ width: '100%' }}
         />
@@ -157,6 +157,7 @@ const ItemForm = ({ initialValues, onSuccess, mode }) => {
       <Form.Item
         name="location"
         label="Location"
+        
       >
         <Input placeholder="e.g., Warehouse A" />
       </Form.Item>
@@ -182,4 +183,4 @@ const ItemForm = ({ initialValues, onSuccess, mode }) => {
   );
 };
 
-export default ItemForm; 
+export default ItemForm;

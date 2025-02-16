@@ -1,151 +1,173 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
-import {
-    Box,
-    Container,
-    Paper,
-    Typography,
-    TextField,
-    Button,
-    FormControlLabel,
-    Checkbox,
-    CircularProgress,
-    Alert,
-    IconButton
-} from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import "../styles/styles.css";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Card, Form, Input, Button, Alert } from 'antd';
+import { useAuth } from '../hooks/useAuth';
 
 const LoginPage = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [rememberMe, setRememberMe] = useState(false);
-    const { login, error, isLoading, clearRememberedLogin } = useAuth();
-    const [showClearRemembered, setShowClearRemembered] = useState(false);
+  const [form] = Form.useForm();
+  const { login, error: authError, isLoading, clearError } = useAuth();
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        // Check if there's a remembered login
-        const hasRememberedLogin = localStorage.getItem('auth') !== null;
-        setShowClearRemembered(hasRememberedLogin);
-    }, []);
+  // Clear errors when component mounts or unmounts
+  useEffect(() => {
+    clearError();
+    return () => clearError();
+  }, [clearError]);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        await login({ email, password, rememberMe });
-    };
+  const onFinish = async (values) => {
+    try {
+      setError(null);
+      console.log('Starting login process with:', { email: values.email });
+      
+      // Call login function with email and password
+      const response = await login(values.email, values.password);
+      console.log('Login response received:', {
+        hasUser: !!response.user,
+        hasToken: !!response.access_token
+      });
+      
+      // Verify we have user data
+      if (!response.user) {
+        throw new Error('Invalid response: missing user data');
+      }
 
-    const handleClearRemembered = () => {
-        if (window.confirm('Are you sure you want to clear your remembered login?')) {
-            clearRememberedLogin();
-            setShowClearRemembered(false);
+      // Store user info in sessionStorage
+      const userInfo = {
+        role: response.user.role,
+        accountId: response.user.account_id,
+        userId: response.user.id,
+        email: response.user.email,
+        name: response.user.name
+      };
+
+      console.log('Storing user info:', {
+        role: userInfo.role,
+        accountId: userInfo.accountId
+      });
+
+      sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
+
+      // Small delay to ensure storage is set
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Verify storage was set correctly
+      const storedToken = sessionStorage.getItem('access_token');
+      const storedUserInfo = sessionStorage.getItem('userInfo');
+      
+      console.log('Verifying stored data:', {
+        hasToken: !!storedToken,
+        hasUserInfo: !!storedUserInfo
+      });
+
+      if (!storedToken || !storedUserInfo) {
+        throw new Error('Failed to store authentication data');
+      }
+
+      // Navigate based on role
+      console.log('Navigating based on role:', userInfo.role);
+      
+      if (['master_admin', 'admin'].includes(userInfo.role)) {
+        console.log('Navigating to admin dashboard');
+        navigate('/admin/dashboard', { replace: true });
+      } else if (userInfo.role === 'account_admin' || userInfo.role === 'user') {
+        if (!userInfo.accountId && userInfo.accountId !== 0) {
+          throw new Error('Invalid response: missing account ID');
         }
-    };
+        console.log('Navigating to account dashboard:', userInfo.accountId);
+        navigate(`/account/${userInfo.accountId}/dashboard`, { replace: true });
+      } else {
+        throw new Error(`Invalid user role: ${userInfo.role}`);
+      }
+    } catch (err) {
+      console.error('Login error:', {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status
+      });
+      
+      // Set appropriate error message
+      const errorMessage = err.response?.data?.error || err.message || 'Login failed';
+      setError(errorMessage);
+      
+      // Clear password field
+      form.setFieldsValue({ password: '' });
+    }
+  };
 
-    return (
-        <Container component="main" maxWidth="xs">
-            <Box
-                sx={{
-                    marginTop: 8,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                }}
+  return (
+    <div style={{ 
+      display: 'flex', 
+      justifyContent: 'center', 
+      alignItems: 'center', 
+      minHeight: '100vh',
+      padding: '20px',
+      background: '#f0f2f5'
+    }}>
+      <Card 
+        title="Login" 
+        style={{ 
+          width: 400, 
+          maxWidth: '100%',
+          boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
+        }}
+      >
+        {(error || authError) && (
+          <Alert
+            message={error || authError}
+            type="error"
+            showIcon
+            style={{ marginBottom: 24 }}
+            closable
+            onClose={() => {
+              setError(null);
+              clearError();
+            }}
+          />
+        )}
+        <Form
+          form={form}
+          name="login"
+          onFinish={onFinish}
+          autoComplete="off"
+          layout="vertical"
+          requiredMark={false}
+        >
+          <Form.Item
+            name="email"
+            label="Email"
+            validateTrigger="onBlur"
+            rules={[
+              { required: true, message: 'Please input your email!' },
+              { type: 'email', message: 'Please enter a valid email!' }
+            ]}
+          >
+            <Input size="large" />
+          </Form.Item>
+
+          <Form.Item
+            name="password"
+            label="Password"
+            rules={[{ required: true, message: 'Please input your password!' }]}
+          >
+            <Input.Password size="large" />
+          </Form.Item>
+
+          <Form.Item style={{ marginBottom: 0 }}>
+            <Button 
+              type="primary" 
+              htmlType="submit" 
+              loading={isLoading} 
+              block
+              size="large"
             >
-                <Paper
-                    elevation={3}
-                    sx={{
-                        padding: 4,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        width: '100%',
-                    }}
-                >
-                    <Typography component="h1" variant="h5" gutterBottom>
-                        Welcome Back
-                    </Typography>
-
-                    {error && (
-                        <Alert severity="error" sx={{ width: '100%', mb: 2 }}>
-                            {error}
-                        </Alert>
-                    )}
-
-                    {showClearRemembered && (
-                        <Box sx={{ width: '100%', mb: 2 }}>
-                            <Alert
-                                severity="info"
-                                action={
-                                    <IconButton
-                                        aria-label="clear"
-                                        color="inherit"
-                                        size="small"
-                                        onClick={handleClearRemembered}
-                                    >
-                                        <DeleteIcon fontSize="inherit" />
-                                    </IconButton>
-                                }
-                            >
-                                You have a saved login
-                            </Alert>
-                        </Box>
-                    )}
-
-                    <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="email"
-                            label="Email Address"
-                            name="email"
-                            autoComplete="email"
-                            autoFocus
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            disabled={isLoading}
-                        />
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            name="password"
-                            label="Password"
-                            type="password"
-                            id="password"
-                            autoComplete="current-password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            disabled={isLoading}
-                        />
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    value="remember"
-                                    color="primary"
-                                    checked={rememberMe}
-                                    onChange={(e) => setRememberMe(e.target.checked)}
-                                    disabled={isLoading}
-                                />
-                            }
-                            label="Remember me"
-                        />
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
-                            disabled={isLoading}
-                        >
-                            {isLoading ? <CircularProgress size={24} /> : 'Sign In'}
-                        </Button>
-                    </Box>
-                </Paper>
-            </Box>
-        </Container>
-    );
+              Log in
+            </Button>
+          </Form.Item>
+        </Form>
+      </Card>
+    </div>
+  );
 };
 
 export default LoginPage;
-

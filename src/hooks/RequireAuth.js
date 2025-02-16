@@ -1,42 +1,71 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "./useAuth";
 
-const RequireAuth = () => {
+const RequireAuth = ({ allowedRoles = [] }) => {
     const location = useLocation();
-    const { isAuthenticated, isLoading } = useAuth();
-    const token = localStorage.getItem("token");
-    const role = localStorage.getItem("role");
+    const { isLoading } = useAuth();
 
-    // Debug logging
+    // Get stored auth data
+    const token = sessionStorage.getItem('access_token');
+    const userInfoStr = sessionStorage.getItem('userInfo');
+    
     console.log('RequireAuth check:', { 
-        isAuthenticated, 
-        isLoading, 
-        token: token ? 'exists' : 'missing',
-        role,
+        hasToken: !!token,
+        hasUserInfo: !!userInfoStr,
         path: location.pathname,
-        state: location.state
+        allowedRoles
     });
 
     // Show loading state while checking authentication
     if (isLoading) {
-        console.log('Auth is still loading, showing loading state...');
+        console.log('Auth is still loading...');
         return <div>Loading...</div>;
     }
 
-    // If not authenticated at all, redirect to login
-    if (!isAuthenticated || !token) {
-        console.log('Authentication check failed:', {
-            isAuthenticated,
-            hasToken: !!token,
-            role,
-            redirectingTo: '/login'
-        });
+    // If no token or user info, redirect to login
+    if (!token || !userInfoStr) {
+        console.log('Missing token or user info, redirecting to login');
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
-    // If authenticated, allow access to the route
-    console.log('Authentication successful, allowing access');
-    return <Outlet />;
+    try {
+        // Parse user info
+        const userInfo = JSON.parse(userInfoStr);
+        
+        // Validate user info
+        if (!userInfo || !userInfo.role || !userInfo.accountId) {
+            console.error('Invalid user info:', userInfo);
+            // Clear invalid session data
+            sessionStorage.removeItem('access_token');
+            sessionStorage.removeItem('userInfo');
+            return <Navigate to="/login" state={{ from: location }} replace />;
+        }
+
+        // Check role authorization if roles are specified
+        if (allowedRoles.length > 0 && !allowedRoles.includes(userInfo.role)) {
+            console.error('Unauthorized role:', {
+                userRole: userInfo.role,
+                allowedRoles,
+                path: location.pathname
+            });
+            return <Navigate to="/unauthorized" replace />;
+        }
+
+        console.log('Authentication successful:', {
+            role: userInfo.role,
+            accountId: userInfo.accountId,
+            isAuthorized: allowedRoles.length === 0 || allowedRoles.includes(userInfo.role)
+        });
+
+        // If everything is valid, allow access to the route
+        return <Outlet />;
+    } catch (error) {
+        console.error('Error parsing user info:', error);
+        // Clear invalid session data
+        sessionStorage.removeItem('access_token');
+        sessionStorage.removeItem('userInfo');
+        return <Navigate to="/login" state={{ from: location }} replace />;
+    }
 };
 
 export default RequireAuth;
