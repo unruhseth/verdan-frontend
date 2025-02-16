@@ -53,7 +53,19 @@ const AccountUsersPage = () => {
 
     const handleEditUser = async (values) => {
         try {
-            await accountApi.updateAccountUser(accountId, selectedUser.id, values);
+            // If a password is provided, handle it separately
+            const { password, ...updateData } = values;
+            
+            // First update the user details
+            await accountApi.updateAccountUser(accountId, selectedUser.id, updateData);
+            
+            // If a password was provided, reset it
+            if (password) {
+                await accountApi.resetUserPassword(accountId, selectedUser.id, {
+                    new_password: password
+                });
+            }
+            
             message.success('User updated successfully');
             setShowEditForm(false);
             setSelectedUser(null);

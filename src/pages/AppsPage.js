@@ -15,7 +15,8 @@ const AppsPage = () => {
     const navigate = useNavigate();
     const { isAuthenticated, isLoading: authLoading } = useAuth();
     const { isAdmin, isLoading: permissionsLoading } = usePermissions();
-    const [loading, setLoading] = useState(false);
+    const [pageLoading, setPageLoading] = useState(false);
+    const [installLoading, setInstallLoading] = useState(false);
     const [error, setError] = useState("");
     const [showModal, setShowModal] = useState(false);
     const [selectedAccount, setSelectedAccount] = useState("");
@@ -30,42 +31,13 @@ const AppsPage = () => {
         messageApi[type](content);
     };
 
-    // Add new function to fetch available apps
-    const fetchAvailableApps = async () => {
-        try {
-            setLoading(true);
-            const response = await api.get('/admin/apps');
-            // Add pricing information (this should ideally come from the backend)
-            const appsWithPricing = response.data.map(app => ({
-                ...app,
-                icon_url: app.icon_url || defaultAppIcon,
-                monthly_price: app.monthly_price || 9.99,
-                yearly_price: app.yearly_price || 99.99
-            }));
-            setAvailableApps(appsWithPricing);
-            setError("");
-        } catch (err) {
-            console.error("Error fetching available apps:", err);
-            setError("Failed to load available apps.");
-            showMessage('error', "Failed to load available apps. Please try again later.");
-        } finally {
-            setLoading(false);
-        }
-    };
-
+    // Fetch initial data
     useEffect(() => {
-        const loadData = async () => {
-            // Skip if already loading
-            if (loading) {
+        const loadInitialData = async () => {
+            if (pageLoading || authLoading || permissionsLoading) {
                 return;
             }
 
-            // Wait for auth and permissions to load
-            if (authLoading || permissionsLoading) {
-                return;
-            }
-
-            // Check authentication and admin status
             if (!isAuthenticated) {
                 navigate('/login');
                 return;
@@ -73,62 +45,130 @@ const AppsPage = () => {
 
             if (!isAdmin()) {
                 setError('You do not have permission to view this page');
-                setLoading(false);
                 return;
             }
 
             try {
-                setLoading(true);
-                // Fetch accounts and available apps in parallel
-                await Promise.all([
-                    (async () => {
-                        const accountsResponse = await api.get('/accounts/');
-                        setAccounts(accountsResponse.data);
-                    })(),
-                    fetchAvailableApps()
-                ]);
+                setPageLoading(true);
                 setError("");
+                
+                // Use Promise.all to fetch all data in parallel
+                const [accountsResponse, appsResponse] = await Promise.all([
+                    api.get('/accounts/'),
+                    api.get('/admin/apps')
+                ]);
+
+                // Process apps data
+                const appsWithPricing = appsResponse.data.map(app => ({
+                    ...app,
+                    icon_url: app.icon_url || defaultAppIcon,
+                    monthly_price: app.monthly_price || 9.99,
+                    yearly_price: app.yearly_price || 99.99
+                }));
+
+                setAccounts(accountsResponse.data);
+                setAvailableApps(appsWithPricing);
             } catch (err) {
                 console.error("Error loading data:", err);
-                setError("Failed to load data.");
+                setError("Failed to load data. Please try again.");
                 showMessage('error', "Failed to load data. Please try again later.");
             } finally {
-                setLoading(false);
+                setPageLoading(false);
             }
         };
 
-        // Only load data if we're authenticated and have permissions loaded
         if (isAuthenticated && !authLoading && !permissionsLoading) {
-            loadData();
+            loadInitialData();
         }
     }, [isAuthenticated, isAdmin, authLoading, permissionsLoading, navigate]);
 
-    // Add a function to fetch installed apps
-    const fetchInstalledApps = async (accountId) => {
+    // Separate effect for fetching installed apps when account is selected
+    useEffect(() => {
+        const fetchInstalledApps = async () => {
+            if (!selectedAccount) return;
+            
+            try {
+                const response = await appManagementApi.listInstalledApps(selectedAccount);
+                setInstalledApps(response.data || []);
+            } catch (error) {
+                console.error("Error fetching installed apps:", error);
+                showMessage('warning', 'Unable to fetch installed apps. Installation checks may not be accurate.');
+                setInstalledApps([]);
+            }
+        };
+
+        fetchInstalledApps();
+    }, [selectedAccount]);
+
+    const handleInstallClick = (app) => {
+        setSelectedApp(app);
+        setSelectedAccount("");
+        setShowModal(true);
+        setInstallStatus({ message: "", type: "" });
+    };
+
+    const handleInstallApp = async () => {
+        if (!selectedAccount || !selectedApp) {
+            showMessage('warning', "Please select an account first");
+            return;
+        }
+
+        const accountId = parseInt(selectedAccount);
+        const appId = selectedApp.id;
+
+        const isAlreadyInstalled = installedApps.some(app => 
+            app.id === appId || 
+            app.uuid === appId || 
+            app.name === selectedApp.name
+        );
+        
+        if (isAlreadyInstalled) {
+            showMessage('warning', `${selectedApp.name} is already installed for this account`);
+            setShowModal(false);
+            setSelectedApp(null);
+            setSelectedAccount("");
+            return;
+        }
+
         try {
-            setLoading(true);
-            const response = await appManagementApi.listInstalledApps(accountId);
-            setInstalledApps(response.data || []);
+            setInstallLoading(true);
+            console.log('Installing app:', { accountId, appId, appName: selectedApp.name });
+            
+            const result = await appManagementApi.installApp(accountId, appId);
+            
+            if (!result.success) {
+                throw new Error(result.error || 'Failed to install app');
+            }
+            
+            const successMessage = result.data?.message || `Successfully installed ${selectedApp.name}`;
+            showMessage('success', successMessage);
+            
+            if (result.data?.warning) {
+                setTimeout(() => {
+                    showMessage('warning', result.data.warning);
+                }, 100);
+            }
+            
+            // Refresh installed apps without closing modal
+            const installedResponse = await appManagementApi.listInstalledApps(accountId);
+            setInstalledApps(installedResponse.data || []);
+            
+            // Only close modal after everything is done
+            setShowModal(false);
+            setSelectedApp(null);
+            setSelectedAccount("");
+            setInstallStatus({ message: "", type: "" });
         } catch (error) {
-            console.error("Error fetching installed apps:", error);
-            // Show a user-friendly error message
-            showMessage('warning', 'Unable to fetch installed apps. Installation checks may not be accurate.');
-            // Set empty array to allow installations to proceed
-            setInstalledApps([]);
+            console.error("Error installing app:", error);
+            const errorMessage = error.message || "Failed to install app";
+            showMessage('error', errorMessage);
         } finally {
-            setLoading(false);
+            setInstallLoading(false);
         }
     };
 
-    // Update loadData to also fetch installed apps when an account is selected
-    useEffect(() => {
-        if (selectedAccount) {
-            fetchInstalledApps(selectedAccount);
-        }
-    }, [selectedAccount]);
-
     // Show loading state while auth or permissions are loading
-    if (authLoading || permissionsLoading || loading) {
+    if (authLoading || permissionsLoading || pageLoading) {
         return (
             <div style={{ textAlign: 'center', padding: '50px' }}>
                 <Spin size="large" />
@@ -149,88 +189,28 @@ const AppsPage = () => {
         );
     }
 
-    const handleInstallClick = (app) => {
-        setSelectedApp(app);
-        setSelectedAccount("");
-        setShowModal(true);
-        setInstallStatus({ message: "", type: "" });
-    };
-
-    const handleInstallApp = async () => {
-        if (!selectedAccount || !selectedApp) {
-            showMessage('warning', "Please select an account first");
-            return;
-        }
-
-        const accountId = parseInt(selectedAccount);
-        const appId = selectedApp.id;
-
-        // Modified check for already installed apps
-        const isAlreadyInstalled = installedApps.some(app => 
-            app.id === appId || 
-            app.uuid === appId || // Check both id and uuid
-            app.name === selectedApp.name
-        );
-        
-        if (isAlreadyInstalled) {
-            showMessage('warning', `${selectedApp.name} is already installed for this account`);
-            setShowModal(false);
-            setSelectedApp(null);
-            setSelectedAccount("");
-            return;
-        }
-
-        try {
-            setLoading(true);
-            console.log('Installing app:', { accountId, appId, appName: selectedApp.name });
-            
-            const result = await appManagementApi.installApp(accountId, appId);
-            
-            if (!result.success) {
-                throw new Error(result.error || 'Failed to install app');
-            }
-            
-            // Show success message and update UI
-            const successMessage = result.data?.message || `Successfully installed ${selectedApp.name}`;
-            showMessage('success', successMessage);
-            
-            // Show warning if there was one
-            if (result.data?.warning) {
-                setTimeout(() => {
-                    showMessage('warning', result.data.warning);
-                }, 100);
-            }
-            
-            // Close modal and reset state
-            setShowModal(false);
-            setSelectedApp(null);
-            setSelectedAccount("");
-            setInstallStatus({ message: "", type: "" });
-            
-            // Refresh the installed apps list
-            await fetchInstalledApps(accountId);
-        } catch (error) {
-            console.error("Error installing app:", error);
-            const errorMessage = error.message || "Failed to install app";
-            showMessage('error', errorMessage);
-        } finally {
-            setLoading(false);
-        }
-    };
-
     // Add function to handle app deletion
     const handleDeleteApp = async (app) => {
         try {
-            setLoading(true);
+            setInstallLoading(true);
             await api.delete(`/admin/apps/${app.id}`);
             showMessage('success', `Successfully deleted ${app.name}`);
-            // Refresh the available apps list
-            await fetchAvailableApps();
+            
+            // Refresh the available apps list using the existing API call
+            const appsResponse = await api.get('/admin/apps');
+            const appsWithPricing = appsResponse.data.map(app => ({
+                ...app,
+                icon_url: app.icon_url || defaultAppIcon,
+                monthly_price: app.monthly_price || 9.99,
+                yearly_price: app.yearly_price || 99.99
+            }));
+            setAvailableApps(appsWithPricing);
+            
         } catch (err) {
             console.error("Error deleting app:", err);
             showMessage('error', `Failed to delete ${app.name}. Please try again later.`);
         } finally {
-            setLoading(false);
+            setInstallLoading(false);
         }
     };
 
@@ -324,6 +304,7 @@ const AppsPage = () => {
                             type="primary"
                             onClick={handleInstallApp}
                             disabled={!selectedAccount}
+                            loading={installLoading}
                         >
                             Install
                         </Button>

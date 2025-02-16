@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { message, App } from "antd";
+import { message, App, Alert, Card, Button, Spin } from "antd";
 import AdminSidebar from "../components/AdminSidebar";
 import AccountSidebar from "../components/AccountSidebar";
 import AccountDetailsMenu from "../components/AccountDetailsMenu";
@@ -136,11 +136,8 @@ const AccountAppsPage = () => {
 
     if (loading) {
         return (
-            <div style={{ padding: '24px' }}>
-                <div className="loading-container">
-                    <div className="loading-spinner"></div>
-                    <p>Loading apps...</p>
-                </div>
+            <div style={{ textAlign: 'center', padding: '50px' }}>
+                <Spin size="large" />
             </div>
         );
     }
@@ -153,61 +150,125 @@ const AccountAppsPage = () => {
             <div style={{ padding: '24px' }}>
                 {isAdmin() && <AccountDetailsMenu />}
                 <div className="apps-section">
-                    <h2>Apps</h2>
-                    {error && <p className="error-message">{error}</p>}
+                    <h2>Installed Apps</h2>
+                    {error && (
+                        <Alert
+                            message="Error"
+                            description={error}
+                            type="error"
+                            showIcon
+                            style={{ marginBottom: '24px' }}
+                        />
+                    )}
                     
-                    {/* Installed Apps Section */}
-                    <div className="installed-apps">
-                        <h3>Installed Apps</h3>
-                        {apps.length === 0 ? (
-                            <div className="no-apps-container">
-                                <p className="no-apps-message">No apps installed.</p>
-                                {canManageApps() && (
-                                    <p className="no-apps-subtext">
-                                        Visit the <Link to="/apps">Apps page</Link> to install apps.
-                                    </p>
-                                )}
-                            </div>
-                        ) : (
-                            <div className="apps-grid">
-                                {apps.map((app) => (
-                                    <div 
-                                        key={app.id} 
-                                        className="app-card installed"
-                                        onClick={() => handleAppClick(app)}
-                                    >
-                                        <div className="app-icon">
-                                            <img 
-                                                src={app.icon_url || defaultAppIcon} 
+                    {apps.length === 0 ? (
+                        <div style={{ 
+                            textAlign: 'center',
+                            padding: '40px',
+                            background: '#f5f5f5',
+                            borderRadius: '8px',
+                            marginTop: '20px'
+                        }}>
+                            <p style={{ 
+                                fontSize: '16px',
+                                color: '#595959',
+                                marginBottom: '12px'
+                            }}>
+                                No apps installed.
+                            </p>
+                            {canManageApps() && (
+                                <p style={{ fontSize: '14px', color: '#8c8c8c' }}>
+                                    Visit the <Link to="/apps" style={{ color: '#1890ff' }}>Apps page</Link> to install apps.
+                                </p>
+                            )}
+                        </div>
+                    ) : (
+                        <div style={{ 
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+                            gap: '24px',
+                            marginTop: '24px'
+                        }}>
+                            {apps.map((app) => (
+                                <Card
+                                    key={app.id}
+                                    hoverable
+                                    style={{ 
+                                        height: '100%',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        textAlign: 'center',
+                                        maxWidth: '280px',
+                                        margin: '0 auto',
+                                        width: '100%'
+                                    }}
+                                    onClick={() => handleAppClick(app)}
+                                >
+                                    <div style={{ 
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center',
+                                        marginBottom: '16px'
+                                    }}>
+                                        <div style={{ 
+                                            width: '64px',
+                                            height: '64px',
+                                            marginBottom: '12px'
+                                        }}>
+                                            <img
+                                                src={app.icon_url || defaultAppIcon}
                                                 alt={`${app.name} icon`}
+                                                style={{
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    objectFit: 'contain'
+                                                }}
                                                 onError={(e) => {
                                                     e.target.onerror = null;
                                                     e.target.src = defaultAppIcon;
                                                 }}
                                             />
                                         </div>
-                                        <div className="app-info">
-                                            <h3>{app.name}</h3>
-                                            <p>{app.description}</p>
-                                        </div>
-                                        {canManageApps() && (
-                                            <div className="app-actions" onClick={e => e.stopPropagation()}>
-                                                <button 
-                                                    className="uninstall-app-btn"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleUninstallApp(app.id);
-                                                    }}
-                                                >
-                                                    Uninstall
-                                                </button>
-                                            </div>
+                                        <h3 style={{ 
+                                            margin: '0 0 8px 0',
+                                            fontSize: '16px',
+                                            fontWeight: 500
+                                        }}>
+                                            {app.name}
+                                        </h3>
+                                        {app.description && (
+                                            <p style={{ 
+                                                margin: 0,
+                                                color: '#595959',
+                                                fontSize: '14px'
+                                            }}>
+                                                {app.description}
+                                            </p>
                                         )}
                                     </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
+                                    {canManageApps() && (
+                                        <div style={{ 
+                                            marginTop: 'auto',
+                                            paddingTop: '16px',
+                                            borderTop: '1px solid #f0f0f0'
+                                        }}>
+                                            <Button
+                                                danger
+                                                type="primary"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleUninstallApp(app.id);
+                                                }}
+                                                style={{ width: '100%' }}
+                                            >
+                                                Uninstall
+                                            </Button>
+                                        </div>
+                                    )}
+                                </Card>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         </App>
